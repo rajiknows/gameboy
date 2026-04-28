@@ -1,27 +1,70 @@
 const std = @import("std");
 const gameboy = @import("gameboy");
 
-pub fn main() !void {
-    // Prints to stderr, ignoring potential errors.
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
-    try gameboy.bufferedPrint();
-}
+/// this represents the Registers (16 bit)
+///
+///
+/// Hi -> first 8 bits ,
+/// Low -> last 8 bits
+///
+///
+/// AF -> Accumulator & flags
+/// F -> flags
+///
+///
+/// so these are basically 8 bit registers that are combined into 16 bit registers
 
-test "simple test" {
-    const gpa = std.testing.allocator;
-    var list: std.ArrayList(i32) = .empty;
-    defer list.deinit(gpa); // Try commenting this out and see if zig detects the memory leak!
-    try list.append(gpa, 42);
-    try std.testing.expectEqual(@as(i32, 42), list.pop());
-}
+// const MixedRegister = enum { AF, BC, DE, HL, SP, PC };
 
-test "fuzz example" {
-    const Context = struct {
-        fn testOne(context: @This(), input: []const u8) anyerror!void {
-            _ = context;
-            // Try passing `--fuzz` to `zig build test` and see if it manages to fail this test case!
-            try std.testing.expect(!std.mem.eql(u8, "canyoufindme", input));
-        }
+const Flags = enum(u8) {
+    Z, // 7 , zero flag,
+    N, // 6, Subtraction flag
+    H, // 5, half carry flag
+    C, // 4, carry flag
+};
+
+pub const reg_mem = struct {
+    A: u8,
+    // flags
+    F: u8,
+    // general purpose registers,
+    BC: u16,
+    DE: u16,
+    HL: u16,
+
+    // program counter
+    PC: u16,
+    // stack pointer
+    SP: u16,
+};
+
+fn init_reg_mem() reg_mem {
+    return .{
+        .A = 0,
+        .F = 0,
+        .BC = 0,
+        .DE = 0,
+        .HL = 0,
+        .PC = 0,
+        .SP = 0,
     };
-    try std.testing.fuzz(Context{}, Context.testOne, .{});
+}
+
+pub fn main() void {
+    var regs = init_reg_mem();
+
+    // 64 kb memory
+    var mem: [65536]u8 = [_]u8{0} ** 65536;
+
+    while (true) {
+        const opcode = mem[regs.PC];
+        regs.PC += 1;
+        execute(opcode, &regs, &mem);
+    }
+}
+
+fn execute(opcode: u8, regs: *reg_mem, mem: *[]u8) !void {
+    switch (opcode) {
+        0x7F => 
+    }
 }
