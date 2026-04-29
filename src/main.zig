@@ -1,5 +1,6 @@
 const std = @import("std");
 const gameboy = @import("gameboy");
+const memory_mod = @import("cpu/memory.zig");
 
 /// this represents the Registers (16 bit)
 ///
@@ -54,7 +55,7 @@ pub fn main() void {
     var regs = init_reg_mem();
 
     // 64 kb memory
-    var mem: [65536]u8 = [_]u8{0} ** 65536;
+    var mem: memory_mod.Memory = [_]u8{0} ** 65536;
 
     while (true) {
         const opcode = mem[regs.PC];
@@ -63,8 +64,8 @@ pub fn main() void {
     }
 }
 
-fn execute(opcode: u8, regs: *reg_mem, mem: *[]u8) !void {
-    switch (opcode) {
-        0x7F => 
+fn execute(_opcode: u8, _regs: *reg_mem, _mem: *[]u8) !void {
+    switch (_opcode) {
+        0x7F =>
     }
 }
